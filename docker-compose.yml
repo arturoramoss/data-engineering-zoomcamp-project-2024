@@ -1,0 +1,32 @@
+version: '3'
+services:
+  magic:
+    image: mageai/mageai:latest
+    command: mage start ${PROJECT_NAME}
+    env_file:
+      - .env
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      USER_CODE_PATH: /home/src/${PROJECT_NAME}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    ports:
+      - 6789:6789
+    volumes:
+      - .:/home/src/
+      # - ~/Documents/secrets/personal-gcp.json:/home/src/personal-gcp.json
+    restart: on-failure:5
+  # postgres:
+  #   image: postgres:14
+  #   restart: on-failure
+  #   container_name: ${PROJECT_NAME}-postgres
+  #   env_file:
+  #     - .env
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DBNAME}
+  #     POSTGRES_USER: ${POSTGRES_USER}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   ports:
+  #     - "${POSTGRES_PORT}:5432"
