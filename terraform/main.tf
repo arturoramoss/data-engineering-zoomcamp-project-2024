@@ -20,17 +20,39 @@ provider "snowflake" {
   role = "SYSADMIN"
 }
 
+# AWS RESOURCES
 resource "aws_s3_bucket" "test_bucket" {
   bucket        = "740868949166-test-bucket"
   force_destroy = true
 }
 
-resource "snowflake_database" "create_db" {
-  name = "TEST_DB"
+# SNOWFLAKE RESOURCES
+resource "snowflake_database" "create_raw_db" {
+  name = "RAW"
+}
+resource "snowflake_database" "create_transformed_db" {
+  name = "TRANSFORMED"
+}
+resource "snowflake_database" "create_analytics_db" {
+  name = "ANALYTICS"
 }
 
 resource "snowflake_warehouse" "warehouse" {
-  name           = "TEST_WH"
+  name           = "DATA_WH"
   warehouse_size = "small"
   auto_suspend   = 60
+}
+
+resource "snowflake_user" "user" {
+  name                 = "Mage"
+  login_name           = "MAGE-SNOW"
+  password             = var.SF_PASS
+  default_warehouse    = "DATA_WH"
+  default_role         = "ACCOUNTADMIN"
+  must_change_password = false
+}
+
+variable "SF_PASS" {
+  type     = string
+  nullable = false
 }
